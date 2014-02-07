@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.WindowsAzure.Management.HDInsight</id>
+    <version>1.0.5.2</version>
+    <title>Windows Azure HDInsight</title>
+    <authors>Microsoft Azure-sdk</authors>
+    <owners>Microsoft Azure-sdk</owners>
+    <licenseUrl>http://go.microsoft.com/fwlink/?LinkId=235170</licenseUrl>
+    <projectUrl>http://hadoopsdk.codeplex.com/</projectUrl>
+    <iconUrl>http://go.microsoft.com/fwlink/?LinkID=288890</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Provides a .NET API for cluster management and job submission on Windows Azure HDInsight service.</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <tags>Microsoft Azure HDInsight Hadoop Scalable windowsazureofficial</tags>
+    <dependencies>
+      <dependency id="Microsoft.Hadoop.Client" />
+    </dependencies>
+    <references>
+      <group targetFramework=".NETFramework4.0">
+        <reference file="Microsoft.WindowsAzure.Management.HDInsight.dll" />
+        <reference file="Microsoft.WindowsAzure.Management.HDInsight.xml" />
+      </group>
+    </references>
+  </metadata>
+</package>

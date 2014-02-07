@@ -39,14 +39,11 @@ namespace ShotgunReduction
         {
 
 
-            //might want to reexamine the way this works.
-            //might be better to generate the random number outside of the for loop.
-            //emitting once for each of the 21 distance thresholds
-            for (int i = 0; i < 21; i++)
-            {
-                //tagging this with the random map group (0-9), and also the distance group (0-20)
-                context.EmitKeyValue(randGen.Next(0, 10).ToString() + ", " + i.ToString(), inputLine);
-            }
+            
+    
+            //tagging this with the random map group (0-9),
+            context.EmitKeyValue(randGen.Next(0, 50).ToString() , inputLine);
+            
 
 
         }
@@ -128,12 +125,18 @@ namespace ShotgunReduction
              *  either assign point to that centroid of create new centroid
              *  repeat
              */
-            var keySplit = key.Split(',');
-            var zIndex = int.Parse(keySplit[1]);
-            zScore = zList[zIndex];
-            bool writeOut = true;
-            List<ClusterPoint> centroids = new List<ClusterPoint>();
-            int count = 0;
+            List<bool> writeOut = new List<bool>(21);
+            for (int i = 0; i < 21; i++)
+            {
+                writeOut.Add(true);
+            }
+           
+            List<List<ClusterPoint>> centroids = new List<List<ClusterPoint>>(21);
+            for (int i = 0; i < 21; i++)
+            {
+                centroids.Add(new List<ClusterPoint>());
+            }
+            int count = 1;
 
             foreach (string value in values)
             {
@@ -141,61 +144,75 @@ namespace ShotgunReduction
                 double xVal = double.Parse(split[0]);
                 double yVal = double.Parse(split[1]);
                 ClusterPoint current = new ClusterPoint(xVal, yVal);
-
-                if (centroids.Count() != 0)
+                //for each level of zscore
+                for (int i = 0; i < 21; i++)
                 {
-                    double minDistance = double.MaxValue;
-                    ClusterPoint minPoint = null;
-
-                    foreach (ClusterPoint centroid in centroids)
+                    zScore = zList[i];
+                    
+                    if (writeOut[i] == false)
                     {
-                        double distance = centroid.SquaredDistance(current);
-                        if (distance < minDistance)
+                        continue;
+                    }
+
+                    if (centroids[i].Count() != 0)
+                    {
+                        double minDistance = double.MaxValue;
+                        ClusterPoint minPoint = null;
+
+                        foreach (ClusterPoint centroid in centroids[i])
                         {
-                            minDistance = distance;
-                            minPoint = centroid;
+                            double distance = centroid.SquaredDistance(current);
+                            if (distance < minDistance)
+                            {
+                                minDistance = distance;
+                                minPoint = centroid;
+
+                            }
+
 
                         }
+                        //if not in any current clusters, create a new one
+                        if (!zTest(zScore, minDistance))
+                        {
+                            centroids[i].Add(current);
 
-
+                        }
+                        //if the point falls in a cluster, adjust that centroid
+                        else
+                        {
+                            minPoint.AdjustCentroid(current);
+                        }
                     }
-                    //if not in any current clusters, create a new one
-                    if (!zTest(zScore, minDistance))
-                    {
-                        centroids.Add(current);
-
-                    }
-                    //if the point falls in a cluster, adjust that centroid
                     else
                     {
-                        minPoint.AdjustCentroid(current);
+                        //empty list, add first centroid
+                        centroids[i].Add(current);
+                    }
+                    
+                    //disregard result if #centroids is too high or too low after 300 points have been evaluated
+                   
+                    if ((count > 300 && centroids[i].Count >= count / 2)||(count>300 && centroids[i].Count == 1))
+                    {
+                        writeOut[i] = false;
+                        
                     }
                 }
-                else
-                {
-                    //empty list, add first centroid
-                    centroids.Add(current);
-                }
-                //break if too many clusters
-                //disregard result
                 count++;
-                if (count > 300 && centroids.Count >= count / 2)
-                {
-                    writeOut = false;
-                    break;
-                }
             }
-
-
             //write out the centroids here
             //currently only writing count
             //eventually will write more information as well
-            if (writeOut)
+            for (int i = 0; i < 21; i++ )
             {
-
-                context.EmitKeyValue("#centroids:", centroids.Count().ToString());
+                if (writeOut[i])
+                {
+                    context.EmitKeyValue("#centroids:", centroids[i].Count().ToString());
+                }
             }
+            
 
         }
+
+
     }
 }
