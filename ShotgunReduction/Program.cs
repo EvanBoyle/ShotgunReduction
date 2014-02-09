@@ -25,7 +25,8 @@ namespace ShotgunReduction
             var hadoop = Hadoop.Connect();
             //var result = hadoop.MapReduceJob.ExecuteJob<MeanStDev>();
             //var result = hadoop.MapReduceJob.ExecuteJob<CombineStatsJob>();
-            var result = hadoop.MapReduceJob.ExecuteJob<ShotgunJob>();
+            //var result = hadoop.MapReduceJob.ExecuteJob<ShotgunJob>();
+            var result = hadoop.MapReduceJob.ExecuteJob<DaviesBouldinPrelim>();
             
         }
     }

@@ -206,7 +206,12 @@ namespace ShotgunReduction
             {
                 if (writeOut[i])
                 {
-                    context.EmitKeyValue("#centroids:", centroids[i].Count().ToString());
+                    string result = "";
+                    foreach (ClusterPoint centroid in centroids[i]){
+                        result += centroid.ToString();
+                    }
+                    context.EmitLine(result.Trim());
+                    //context.EmitLine(centroids[i].Count.ToString());
                 }
             }
             

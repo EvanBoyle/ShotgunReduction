@@ -12,6 +12,12 @@ namespace ShotgunReduction
         public double x;
         public double y;
         public double count;
+        public double dbCount;
+        public double dbDistance;
+
+        public void updateDB(ClusterPoint other){
+            dbDistance = (dbDistance / (dbCount + 1)) + SquaredDistance(other) / (dbCount + 1);
+        }
 
         public void AdjustCentroid(ClusterPoint other)
         {
@@ -21,10 +27,17 @@ namespace ShotgunReduction
             count++;
         }
 
+        public override string ToString()
+        {
+            return x.ToString() + ", " + y.ToString()+'\t';
+        }
+
         public ClusterPoint(double xVal, double yVal)
         {
             x = xVal;
             y = yVal;
+            dbDistance = 0;
+            dbCount = 0;
             count = 1;
 
         }
@@ -33,7 +46,7 @@ namespace ShotgunReduction
         {
             double xComp = x - other.x;
             double yComp = y - other.y;
-            return xComp * xComp + y * yComp;
+            return xComp * xComp + yComp * yComp;
         }
     }
 }
