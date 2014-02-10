@@ -93,6 +93,7 @@
   <ItemGroup>
     <Compile Include="ClusterPoint.cs" />
     <Compile Include="CombineStatsJob.cs" />
+    <Compile Include="DaviesBouldinPrelim.cs" />
     <Compile Include="DaviesBouldinReduction.cs" />
     <Compile Include="MeanStDev.cs" />
     <Compile Include="Program.cs" />

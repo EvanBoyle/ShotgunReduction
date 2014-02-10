@@ -22,8 +22,8 @@ namespace ShotgunReduction
         public void AdjustCentroid(ClusterPoint other)
         {
 
-            x = (count * x) / (count + 1) + other.x / (count + 1);
-            y = (count * y) / (count + 1) + other.y / (count + 1);
+            x = ((count * x) + other.x)/(count+1);
+            y = ((count * y) + other.y )/ (count + 1);
             count++;
         }
 

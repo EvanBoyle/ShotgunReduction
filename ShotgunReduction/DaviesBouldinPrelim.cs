@@ -16,6 +16,7 @@ namespace ShotgunReduction
             var config = new HadoopJobConfiguration();
             config.InputPath = "input/clustering";
             config.OutputFolder = "output/clustering/shotgun/dbIndeces";
+            config.DeleteOutputFolder = true;
 
             return config;
         }
@@ -23,10 +24,12 @@ namespace ShotgunReduction
 
     class DBMapper : MapperBase
     {
+        Random rand = new Random();
         List<List<ClusterPoint>> centroids = new List<List<ClusterPoint>>();
 
         public void processLine(String input, MapperContext context)
         {
+            
             List<ClusterPoint> cluster = new List<ClusterPoint>();
             String[] points = input.Split('\t');
             foreach (String point in points)
@@ -66,9 +69,10 @@ namespace ShotgunReduction
 
         public override void Map(string inputLine, MapperContext context)
         {
+            
             string[] split = inputLine.Split(',');
             var x = double.Parse(split[0]);
-            var y = double.Parse(split[0]);
+            var y = double.Parse(split[1]);
             ClusterPoint current = new ClusterPoint(x, y);
             int clusterNumber = 0;
             foreach (List<ClusterPoint> cluster in centroids)
@@ -88,7 +92,8 @@ namespace ShotgunReduction
                     }
                     count++;
                 }
-                context.EmitKeyValue(clusterNumber.ToString() + ", "+count.ToString(), minDist.ToString()+ ", 1");
+                
+                context.EmitKeyValue(clusterNumber.ToString() + ", "+index.ToString(), minDist.ToString()+ ", 1");
                 clusterNumber++;
             }
             
@@ -107,9 +112,10 @@ namespace ShotgunReduction
                 string[] split = value.Split(',');
                 double dist = double.Parse(split[0]);
                 double count = double.Parse(split[1]);
-                dbDist = dbDist / (dbCount + count) + (count * dist) / (dbCount + count);
+                dbDist = (dbDist * dbCount + dist * count) / (dbCount + count);
                 dbCount += count;
             }
+            
             context.EmitKeyValue(key, dbDist.ToString());
         }
     }
@@ -125,7 +131,7 @@ namespace ShotgunReduction
                 string[] split = value.Split(',');
                 double dist = double.Parse(split[0]);
                 double count = double.Parse(split[1]);
-                dbDist = dbDist / (dbCount + count) + (count * dist) / (dbCount + count);
+                dbDist = (dbDist * dbCount + dist * count) / (dbCount + count);
                 dbCount += count;
             }
             context.EmitKeyValue(key, dbDist.ToString() + ", " + dbCount.ToString());
